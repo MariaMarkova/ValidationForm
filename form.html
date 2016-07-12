@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+
+	body {
+		font-family: 'Arial, Helevetica', sans-serif;
+	}
+	form {
+		border: 1px solid black;
+	}
+	
+	form > div {
+		padding: 0.5em 0.3em;
+	}
+	
+	form input {
+		padding: 0.3em 0.3em;
+		border: 1px solid grey;
+		width: 99%
+		/* width: 95%;
+		margin-right: 2.5%;
+		margin-left: 2.5%; */
+	}
+	
+	form input.error, form input.error:focus {
+		border: 1px solid red !important;
+	}
+	
+	form label {
+		display: block;
+		font-weight: bold;
+	}
+	
+	p.error {
+		font-weight: bold;
+		color: red;
+		margin: 0;
+		padding: 0.3em 0;
+	}
+</style>
+
+<script type="text/javascript">
+
+function validName(text) {
+	return text.split(' ').length == 3;
+}
+
+function validDate(text) {
+	var dateArray = text.split('/');
+	
+	if (dateArray.length != 3) {
+		return false;
+	}
+	
+	var day = parseInt(dateArray[0]);
+	var month = parseInt(dateArray[1]);
+	var year = parseInt(dateArray[2]);
+	
+	if (dateArray[0].length != 2) {
+		return false;
+	}
+	
+	if (day < 1 || day > 31) {
+		return false;
+	}
+	
+	if (dateArray[1].length != 2) {
+		return false;
+	}
+	
+	if (month < 1 || month > 12) {
+		return false;
+	}
+	
+	if (dateArray[2].length != 4) {
+		return false;
+	}
+	
+	var currentDate= new Date();
+	if (year < 1900 || year > currentDate.getFullYear() - 1) {
+		return false;
+	}
+	
+	return true;
+}
+
+function isValidPhone(text) {
+	if (text.indexOf('+359') != 0 || isNaN(parseInt(text))) {
+		return false;
+	}
+	
+	return true;
+}
+
+function isValidEmail(text) {
+	return text.match(/[a-z\.\-\_]+@[a-z\.\-\_]+\.[a-z]{2,4}/) ? true : false;
+}
+
+function validateField(domEl, fnValidator, strMessage) {
+	
+	var errorContainer = domEl.nextElementSibling;
+	errorContainer.innerHTML = '';
+	domEl.className = domEl.className.replace('error', '');
+	if (!fnValidator(domEl.value)) {
+		errorContainer.innerHTML = strMessage;
+		domEl.className = domEl.className + ' error';
+		
+		return false;
+	}
+	
+	return true;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+	var form = document.querySelector('form');
+	
+	form.addEventListener('submit', function (event) {
+		var name = document.querySelector('#name');
+		var dateOfBirth = document.querySelector('#date-of-birth');
+		var phone = document.querySelector('#phone');
+		var email = document.querySelector('#email');
+		
+		var r1 = validateField(name, validName, 'Enter et least 3 words');
+		var r2 = validateField(dateOfBirth, validDate, 'Enter valid date n format dd/mm/yyyy');
+		var r3 = validateField(phone, isValidPhone, 'Enter valid phone in format +3598xxxxxxxx');
+		var r4 = validateField(email, isValidEmail, 'Enter valid email');
+	
+		if (r1 && r2 && r3 && r4) {
+			return;
+		}
+		
+		event.preventDefault();
+	}, false);
+}, false)
+
+</script>
+</head>
+<body>
+	<form action="" novalidate>
+		<div>
+			<label for="">Name</label>
+			<input type="text" placeholder="3 words" id="name"/>
+			<p class="error"></p>
+		</div>
+		<div>
+			<label for="">Date Of Birth</label>
+			<input type="text" placeholder="dd/mm/yyyy" id="date-of-birth"/>
+			<p class="error"></p>
+		</div>
+		
+		<div>
+			<label for="">Phone</label>
+			<input type="text" placeholder="+3598xxxxxxxx" id="phone"/>
+			<p class="error"></p>
+		</div>
+		
+		<div>
+			<label for="">Email</label>
+			<input type="email" id="email" />
+			<p class="error"></p>
+		</div>
+		<div>
+			<button type="submit">Submmit</button>
+		</div>
+	</form>
+</body>
+</html>
